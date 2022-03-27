@@ -28,7 +28,7 @@
 
     <div class="p-4 grid grid-cols-3 grid-row-4 gap-4 h-full">
         <div class="card p-2 col-span-3 order-1">
-            <h5 class="text-center font-bold">Grafik Pertumbuhan Pendapatan</h5>
+            <h5 class="text-center font-bold">Grafik Pertumbuhan Pendapatan Bulan {{ $month }}</h5>
             <livewire:livewire-line-chart :line-chart-model="$lineChartModel" />
         </div>
         <div class="card p-2 col-span-2 order-2">

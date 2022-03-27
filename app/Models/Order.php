@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,8 +21,11 @@ class Order extends Model
         return $this->hasMany(OrderDetail::class);
     }
 
-    public function setDateAttribute($value)
+    public function transactionDate(): Attribute
     {
-        $this->attributes['created_at'] = Carbon::createFromFormat('d', $value)->format('d');
+        return Attribute::make(
+            fn ($value) => Carbon::createFromFormat('d', $value)->format('d'),
+            fn ($value) => Carbon::createFromFormat('d', $value)->format('d')
+        );
     }
 }

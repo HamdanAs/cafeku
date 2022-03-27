@@ -11,6 +11,7 @@ use Asantibanez\LivewireCharts\Models\LineChartModel;
 use Asantibanez\LivewireCharts\Models\PieChartModel;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -37,7 +38,12 @@ class ManagerDashboard extends Component
 
     private function setRevenueForChart()
     {
-        return Order::query()->orderBy('created_at')->get();
+        return Order::query()
+            ->groupBy('date')
+            ->get(array(
+                DB::raw('Date(created_at) as date'),
+                DB::raw('sum(total) as total')
+            ));
     }
 
     private function setColumnChartModel($data, $colors)
@@ -58,42 +64,46 @@ class ManagerDashboard extends Component
             );
     }
 
-    private function setPieChartModel($data){
+    private function setPieChartModel($data)
+    {
         return $data->groupBy('name')
-            ->reduce(function (PieChartModel $pieChartModel, $data) {
-                $type = $data->first()->name;
-                $value = $data->first()->orders_sum_qty;
+            ->reduce(
+                function (PieChartModel $pieChartModel, $data) {
+                    $type = $data->first()->name;
+                    $value = $data->first()->orders_sum_qty;
 
-                return $pieChartModel->addSlice($type, $value, randColor());
-            }, LivewireCharts::pieChartModel()
-                //->setTitle('Expenses by Type')
-                // ->setAnimated($this->firstRun)
-                ->withOnSliceClickEvent('onSliceClick')
-                //->withoutLegend()
-                ->legendPositionRight()
-                ->legendHorizontallyAlignedCenter()
-                // ->setDataLabelsEnabled($this->showDataLabels)
-                ->setColors(['#b01a1b', '#d41b2c', '#ec3c3b', '#f66665'])
+                    return $pieChartModel->addSlice($type, $value, randColor());
+                },
+                LivewireCharts::pieChartModel()
+                    //->setTitle('Expenses by Type')
+                    // ->setAnimated($this->firstRun)
+                    ->withOnSliceClickEvent('onSliceClick')
+                    //->withoutLegend()
+                    ->legendPositionRight()
+                    ->legendHorizontallyAlignedCenter()
+                    // ->setDataLabelsEnabled($this->showDataLabels)
+                    ->setColors(['#b01a1b', '#d41b2c', '#ec3c3b', '#f66665'])
             );
     }
 
     private function setLineChartModel($data)
     {
-        return $data->groupBy('created_at')
-            ->reduce(function (PieChartModel $pieChartModel, $data) {
-                $type = $data->first()->name;
-                $value = $data->first()->orders_sum_qty;
+        return $data->groupBy('date')
+            ->reduce(
+                function (LineChartModel $lineChartModel, $data) {
+                    $type = Carbon::createFromFormat('Y-m-d', $data->first()->date)->format('d');
+                    $value = $data->first()->total;
 
-                return $pieChartModel->addSlice($type, $value, randColor());
-            }, LivewireCharts::pieChartModel()
-                //->setTitle('Expenses by Type')
-                // ->setAnimated($this->firstRun)
-                ->withOnSliceClickEvent('onSliceClick')
-                //->withoutLegend()
-                ->legendPositionRight()
-                ->legendHorizontallyAlignedCenter()
-                // ->setDataLabelsEnabled($this->showDataLabels)
-                ->setColors(['#b01a1b', '#d41b2c', '#ec3c3b', '#f66665'])
+                    return $lineChartModel->addPoint($type, $value);
+                },
+                LivewireCharts::lineChartModel()
+                    //->setTitle('Expenses by Type')
+                    ->setAnimated($this->firstRun)
+                    //->withoutLegend()
+                    ->legendPositionRight()
+                    ->legendHorizontallyAlignedCenter()
+                    // ->setDataLabelsEnabled($this->showDataLabels)
+                    ->setColors(['#b01a1b', '#d41b2c', '#ec3c3b', '#f66665'])
             );
     }
 
@@ -104,6 +114,8 @@ class ManagerDashboard extends Component
             ->orderBy('orders_sum_qty', 'desc')
             ->get();
 
+            // dd($mostBoughtMenus->groupBy('name'));
+
         $colors = arrayWithKey($this->colors, $mostBoughtMenus->toArray(), 'name');
 
         $columnChartModel = $this->setColumnChartModel($mostBoughtMenus, $colors);
@@ -112,12 +124,16 @@ class ManagerDashboard extends Component
 
         $lineChartModel = $this->setLineChartModel($this->setRevenueForChart());
 
-        return view('livewire.manager-dashboard',
+        return view(
+            'livewire.manager-dashboard',
             compact(
                 'columnChartModel',
                 'pieChartModel',
                 'lineChartModel',
-                'mostBoughtMenus')
-            );
+                'mostBoughtMenus'
+            )
+        )->with([
+            'month' => Carbon::now()->monthName . ' ' . Carbon::now()->year
+        ]);
     }
 }
