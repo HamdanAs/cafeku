@@ -1,0 +1,145 @@
+POST http://127.0.0.1:8000/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "21hamdanas@manager.com",
+    "password": "12341234"
+}
+
+###
+
+POST http://127.0.0.1:8000/api/auth/register HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "21hamdanas@manager.com",
+    "username": "manager",
+    "password": "password",
+    "password_confirmation": "password"
+}
+
+###
+
+GET http://127.0.0.1:8000/api/profile HTTP/1.1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/api/roles HTTP/1.1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/api/logout HTTP/1.1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/api/user HTTP/1.1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/api/product HTTP/1.1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/product HTTP/1.1
+Authorization: Bearer 3|XZUiC6p2dB7RimO86wNTMPCfxKRdxJuOjkvWEXbv
+Accept: application/json
+Content-Type: application/json
+
+{
+    "code": "product-code",
+    "name": "Kopi Latte",
+    "price": 8000,
+    "description": "Perfait merupakan makanan sejenis eskrim dan ditaburi dengan keju serta coklat",
+    "picture": "product-picture",
+    "stock": 10
+}
+
+###
+
+GET http://127.0.0.1:8000/api/product/1 HTTP/1.1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+PUT http://127.0.0.1:8000/api/product/1 HTTP/1.1
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "code": "product-code",
+    "name": "Perfait Keju dengan Taburan Chocochips",
+    "price": 17000,
+    "picture": "product-picture",
+    "stock": 0
+}
+
+###
+
+DELETE http://127.0.0.1:8000/api/product/1 HTTP/1.1
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+###
+
+PATCH http://127.0.0.1:8000/api/give-role/3 HTTP/1.1
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "role": 3
+}
+
+###
+
+GET http://127.0.0.1:8000/api/activity-log HTTP/1.1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/place-order HTTP/1.1
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "table": 1,
+    "total": 0,
+    "details": [
+        {
+            "product_id": 2,
+            "qty": 2,
+            "total": 30000
+        },
+        {
+            "product_id": 3,
+            "qty": 4,
+            "total": 24000
+        }
+    ]
+}
+
+###
+PATCH http://127.0.0.1:8000/api/product/2/stock HTTP/1.1
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "amount": 10
+}
