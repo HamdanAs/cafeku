@@ -37,42 +37,20 @@
     </div>
     @endif
 
-    <div class="w-80 p-6 bg-white rounded-md mt-2">
+    <div class="w-1/3 p-6 bg-white rounded-md mt-2">
+        <x-errors class="mb-3" />
         <form wire:submit.prevent="register">
-            <div class="relative z-0 mb-6 w-full group">
-                <input type="text" name="username" wire:model.lazy="form.username" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" ">
-                <label for="floating_username" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Username</label>
-                @error('form.username')
-                <span class="text-red-500 text-xs">{{ $message }}</span>
-                @enderror
-            </div>
-            <div class="relative z-0 mb-6 w-full group">
-                <input type="email" name="email" wire:model.lazy="form.email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" ">
-                <label for="floating_email" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email address</label>
-                @error('form.email')
-                <span class="text-red-500 text-xs">{{ $message }}</span>
-                @enderror
-            </div>
-            <div class="relative z-0 mb-6 w-full group">
-                <input type="password" name="password" wire:model.lazy="form.password" id="floating_password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" ">
-                <label for="floating_password" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password</label>
-                @error('form.password')
-                <span class="text-red-500 text-xs">{{ $message }}</span>
-                @enderror
-            </div>
-            <div class="relative z-0 mb-6 w-full group">
-                <input type="password" name="password_confirmation" wire:model.lazy="form.password_confirmation" id="floating_password_confirmation" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" ">
-                <label for="floating_password_confirmation" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Konfirmasi Password</label>
-                @error('form.password_confirmation')
-                <span class="text-red-500 text-xs">{{ $message }}</span>
-                @enderror
-            </div>
+            <x-input wire:model.lazy="form.username" class="mb-3" icon="user" label="Username" placeholder="Input username" />
+            <x-input wire:model.lazy="form.email" class="mb-3" icon="mail" label="Email" placeholder="Input email" />
+            <x-input wire:model.lazy="form.password" class="mb-3" icon="key" label="Password" placeholder="Input Password" type="password" />
+            <x-input wire:model.lazy="form.password_confirmation" class="mb-3" icon="key" label="Konfirmasi Password" placeholder="Input Password" type="password" />
+
             <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 <div wire:loading.inline>Loading ... </div>
                 <span wire:loading.remove>Register</span>
             </button>
 
-            <a href="/login">Login</a>
+            <x-button href="/login" label="Login" outline primary />
         </form>
 
     </div>

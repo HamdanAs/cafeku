@@ -4,18 +4,16 @@ namespace App\Http\Livewire;
 
 use App\Models\Product;
 use Livewire\Component;
+use WireUi\Traits\Actions;
 
 class ManagerMenu extends Component
 {
 
-    public $menus;
+    use Actions;
+
+    public $search;
 
     protected $listeners = ['stockSub' => 'subMenu', 'stockAdd' => 'addMenu'];
-
-    public function mount()
-    {
-        $this->menus = Product::all();
-    }
 
     public function addMenu($id)
     {
@@ -39,6 +37,23 @@ class ManagerMenu extends Component
 
     public function deleteMenu($id)
     {
+        return $this->dialog()->confirm([
+            'title' => 'Apakah anda yakin?',
+            'description' => 'Apakah anda ingin menghapus menu ini?',
+            'icon' => 'question',
+            'accept' => [
+                'label' => 'Ya, saya ingin menghapus ini',
+                'method' => 'deleted',
+                'params' => $id
+            ],
+            'reject' => [
+                'label' => 'Tidak, saya tidak ingin'
+            ]
+        ]);
+    }
+
+    public function deleted($id)
+    {
         $product = Product::find($id);
 
         $product->delete();
@@ -50,6 +65,10 @@ class ManagerMenu extends Component
 
     public function render()
     {
-        return view('livewire.manager-menu');
+        return view('livewire.manager-menu', [
+            'menus' => $this->search === null ?
+                Product::paginate(6) :
+                Product::query()->where('name', 'like', '%' . $this->search . '%')->paginate(6)
+        ]);
     }
 }

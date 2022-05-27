@@ -25,11 +25,8 @@
             </span>
             <hr class="my-1">
             <span class="flex justify-between text-gray-400">
-                @php
-                $price = "Rp " . number_format($item->price * $item->quantity,2,',','.');
-                @endphp
                 <span>Subtotal</span>
-                <span>{{ $price }}</span>
+                <span>{{ formatRupiah($item->price * $item->quantity) }}</span>
             </span>
         </div>
 
@@ -48,11 +45,8 @@
     @if ($items)
     <li class="w-full px-4 py-2 border-b border-gray-200 dark:border-gray-600">
         <span class="flex justify-between ">
-            @php
-            $total = "Rp " . number_format($total,2,',','.');
-            @endphp
             <span class="font-bold tracking-tight text-gray-900">Total</span>
-            <span class="font-bold tracking-tight text-gray-900">{{ $total }}</span>
+            <span class="font-bold tracking-tight text-gray-900">{{ formatRupiah($total) }}</span>
         </span>
 
         <form wire:submit.prevent="process">

@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Order;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Component;
@@ -12,12 +13,12 @@ class TransactionProcess extends Component
     use LivewireAlert;
 
     public $form = [
-        'table' => '',
+        'customer' => '',
         'payment' => 0
     ];
 
     protected $rules = [
-        'form.table' => 'required|integer',
+        'form.customer' => 'required',
         'form.payment' => 'required|not_in:0'
     ];
 
@@ -36,10 +37,12 @@ class TransactionProcess extends Component
         }
 
         $order = Order::create([
-            'table_no' => $this->form['table'],
+            'customer_name' => $this->form['customer'],
             'total' => $total,
             'payment' => $this->form['payment'],
-            'status' => Order::EATING
+            'status' => Order::EATING,
+            'user_id' => Auth::user()->id,
+            'created_at' => Carbon::now()->addDays(2)
         ]);
 
         $items = \Cart::session(Auth::user()->id)->getContent();
@@ -57,6 +60,8 @@ class TransactionProcess extends Component
         \Cart::clear();
 
         $this->clearInput();
+
+        activity()->causedBy(Auth::user())->log('Membuat transaksi sebesar ' . formatRupiah($order->total));
 
         return $this->flash('success', "Transaksi berhasil kembaliannya adalah $recharge", [
             'toast' => false,

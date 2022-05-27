@@ -1,4 +1,5 @@
 <div class="p-4">
+    <x-notifications z-index="z-50" />
     <nav class="flex mb-3" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
             <li class="inline-flex items-center">
@@ -41,13 +42,6 @@
 
             <form wire:submit.prevent="save">
                 <div class="relative z-0 mb-6 w-full group">
-                    <input type="text" name="form.code" wire:model.lazy="form.code" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" ">
-                    <label for="floating_email" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Kode Poduk</label>
-                    @error('form.code')
-                    <p class="mt-2 text-sm text-red-500 dark:text-gray-400">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="relative z-0 mb-6 w-full group">
                     <input type="text" name="form.name" id="floating_password" wire:model.lazy="form.name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" ">
                     <label for="floating_password" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nama Produk</label>
                     @error('form.name')
@@ -70,7 +64,16 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+                <x-select class="mb-4" label="Kategori" placeholder="Pilih kategori" wire:model.lazy="form.category_id">
+                    <x-select.option label="Pilih kategori" value="0" />
+                    @foreach ($categories as $category)
+                    <x-select.option label="{{ $category->name }}" value="{{ $category->id }}" />
+                    @endforeach
+                </x-select>
+
+                <x-textarea wire:model.lazy="form.description" label="Deskripsi" placeholder="Deskripsi produk" />
+
+                <button type="submit" class="mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
             </form>
         </div>
 

@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->integer('table_no');
+            $table->string('customer_name')->default('Anonim');
             $table->bigInteger('total')->default(0);
             $table->bigInteger('payment')->default(0);
             $table->tinyInteger('status')->default(Order::EATING);

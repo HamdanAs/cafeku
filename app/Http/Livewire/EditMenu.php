@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Intervention\Image\Facades\Image;
@@ -71,6 +72,8 @@ class EditMenu extends Component
             'price' => $product->price,
             'image' => ''
         ];
+
+        activity()->causedBy(Auth::user())->log('Mengubah menu ' . $product->name);
 
         return redirect()->back()->with('success', 'Data berhasil disimpan!');
     }

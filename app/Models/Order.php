@@ -21,11 +21,29 @@ class Order extends Model
         return $this->hasMany(OrderDetail::class);
     }
 
-    public function transactionDate(): Attribute
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function transactionMonth(): Attribute
     {
         return Attribute::make(
-            fn ($value) => Carbon::createFromFormat('d', $value)->format('d'),
-            fn ($value) => Carbon::createFromFormat('d', $value)->format('d')
+            fn ($value, $attributes) => Carbon::parse($attributes['date'])->format('F'),
+        );
+    }
+
+    public function transactionMonthCode(): Attribute
+    {
+        return Attribute::make(
+            fn ($value, $attributes) => Carbon::parse($attributes['date'])->month,
+        );
+    }
+
+    public function transactionYear(): Attribute
+    {
+        return Attribute::make(
+            fn ($value, $attributes) => Carbon::parse($attributes['date'])->format('Y'),
         );
     }
 }

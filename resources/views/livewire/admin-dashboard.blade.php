@@ -2,6 +2,30 @@
     <div class="col-span-2 bg-white rounded-lg border shadow-md p-4">
         <h5 class="text-xl font-bold leading-none text-gray-900 mb-4 dark:text-white">Log Aktifitas</h5>
 
+        <x-modal.card blur wire:model.defer="blurModal">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                <div class="flex justify-center col-span-1 sm:col-span-2">
+                    <div class="flex-shrink-0">
+                        <img class="w-24 h-24 rounded-full" src="{{ $form['picture'] ?? asset('image/user.png') }}">
+                    </div>
+                </div>
+
+                <x-input wire:model.defer="form.fullName" disabled label="Nama Lengkap" placeholder="Nama lengkap" />
+                <x-input wire:model.defer="form.phone" disabled label="No Telepon" placeholder="Nomor Telepon" />
+                <x-input wire:model.defer="form.gender" disabled label="Jenis Kelamin" placeholder="Nomor Telepon" />
+                <x-input wire:model.defer="form.birthdate"  disabled label="Tanggal Lahir" placeholder="Nomor Telepon" />
+
+                <div class="col-span-1 sm:col-span-2">
+                    <x-input wire:model.defer="form.email" disabled label="Email" placeholder="example@mail.com" />
+                </div>
+
+                <div class="col-span-1 sm:col-span-2">
+                    <x-textarea wire:model.defer="form.fullAdress" disabled wire:model="address" label="Alamat Lengkap" />
+                </div>
+            </div>
+        </x-modal.card>
+
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
@@ -11,9 +35,6 @@
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Aktifitas
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Model Terkait
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Waktu
@@ -30,15 +51,16 @@
                             {{ $activity->description }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ $activity->subject?->name }}
-                        </td>
-                        <td class="px-6 py-4">
                             {{ $activity->created_at }}
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
+
+            <div class="p-4">
+                {{ $activities->links() }}
+            </div>
         </div>
     </div>
 
@@ -66,9 +88,9 @@
                                 {{ $user->email }}
                             </p>
                         </div>
-                        <!-- <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                            $320
-                        </div> -->
+                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                            <x-button label="Lihat" onclick="$openModal('blurModal')" wire:click="checkUser({{ $user->id }})" primary />
+                        </div>
                     </div>
                 </li>
                 @endforeach

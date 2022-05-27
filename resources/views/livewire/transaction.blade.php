@@ -36,15 +36,13 @@
                 <div class="col-span-2 w-full">
                     @foreach ($menus as $menu)
                     <button wire:click="addToCart({{ $menu->id }})" class="mb-2 flex flex-col w-full items-center bg-white rounded-lg border shadow-md md:flex-row md:max-w-full hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-                        <img class="object-cover w-full h-28 rounded-t-lg md:h-28 md:w-48 md:rounded-none md:rounded-l-lg" src="/{{ 'storage/' . $menu?->picture }}" alt="">
+                        <div class="w-48">
+                            <img class="object-cover w-1/2 mx-auto rounded-t-lg md:rounded-none md:rounded-l-lg" src="/{{ 'storage/' . $menu?->picture }}" alt="">
+                        </div>
                         <div class="flex flex-col p-4">
-                            @php
-                            $price = "Rp " . number_format($menu->price,2,',','.');
-                            @endphp
-
                             <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">{{ $menu->name }}</h5>
 
-                            <p class="mb-3 text-left font-sm text-gray-700 dark:text-gray-400">{{ $price }}</p>
+                            <p class="mb-3 text-left font-sm text-gray-700 dark:text-gray-400">{{ formatRupiah($menu->price) }}</p>
                         </div>
                     </button>
                     @endforeach

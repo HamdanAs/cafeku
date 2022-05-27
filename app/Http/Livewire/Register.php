@@ -21,6 +21,16 @@ class Register extends Component
         'form.password' => 'required|confirmed'
     ];
 
+    protected $messages = [
+        'form.username.required' => 'Username harus diisi.',
+        'form.username.unique' => 'Username sudah terdaftar.',
+        'form.email.required' => 'Email harus diisi.',
+        'form.email.unique' => 'Email sudah terdaftar.',
+        'form.email.email' => 'Format email salah.',
+        'form.password.required' => 'Password harus diisi.',
+        'form.password.confirmed' => 'Konfirmasi password salah.'
+    ];
+
     public function register()
     {
         $this->validate();
@@ -28,7 +38,8 @@ class Register extends Component
         $user = User::create([
             'username' => $this->form['username'],
             'email' => $this->form['email'],
-            'password' => Hash::make($this->form['password'])
+            'password' => Hash::make($this->form['password']),
+            'role_id' => 1
         ]);
 
         $user->person()->create();

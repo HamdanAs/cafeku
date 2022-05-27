@@ -22,6 +22,8 @@ class RoleSeeder extends Seeder
             'WTR' => 'Waiter',
         ];
 
+        Role::create(['id' => 0, 'code' => 'NULL', 'name' => 'Belum memiliki role']);
+
         foreach($roles as $key => $role){
             Role::create([
                 'code' => $key,

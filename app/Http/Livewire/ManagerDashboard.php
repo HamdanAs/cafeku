@@ -2,18 +2,17 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Category;
 use App\Models\Order;
-use App\Models\OrderDetail;
 use App\Models\Product;
 use Asantibanez\LivewireCharts\Facades\LivewireCharts;
 use Asantibanez\LivewireCharts\Models\ColumnChartModel;
 use Asantibanez\LivewireCharts\Models\LineChartModel;
 use Asantibanez\LivewireCharts\Models\PieChartModel;
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Livewire\Component;
+use Spatie\Activitylog\Models\Activity;
 
 class ManagerDashboard extends Component
 {
@@ -21,41 +20,58 @@ class ManagerDashboard extends Component
     public $salesThisMonth;
     public $dailyRevenue;
     public $monthlyRevenue;
+    public $chartMonth;
+    public $chartYear;
 
     private $firstRun = true;
-    private $colors = [
-        '#f6ad55',
-        '#fc8181',
-        '#90cdf4'
-    ];
+
     public function mount()
     {
         $this->salesToday = Order::query()->whereDate('created_at', Carbon::today())->count();
         $this->salesThisMonth = Order::query()->whereMonth('created_at', Carbon::now()->month)->count();
         $this->dailyRevenue = Order::query()->whereDate('created_at', Carbon::today())->sum('total');
         $this->monthlyRevenue = Order::query()->whereMonth('created_at', Carbon::now()->month)->sum('total');
+        $this->chartMonth = 03;
+        $this->chartYear = 2022;
     }
 
     private function setRevenueForChart()
     {
-        return Order::query()
+        $order = Order::query()
             ->groupBy('date')
+            ->whereMonth("created_at", $this->chartMonth)
+            ->whereYear('created_at', $this->chartYear)
             ->get(array(
                 DB::raw('Date(created_at) as date'),
                 DB::raw('sum(total) as total')
             ));
+
+        return $order;
     }
 
-    private function setColumnChartModel($data, $colors)
+    public function changeChart()
+    {
+        $order = Order::query()
+            ->groupBy('date')
+            ->whereMonth("created_at", $this->chartMonth)
+            ->whereYear('created_at', $this->chartYear)
+            ->get(array(
+                DB::raw('Date(created_at) as date'),
+                DB::raw('sum(total) as total'),
+            ));
+
+        $this->setLineChartModel($order);
+    }
+
+    private function setColumnChartModel($data)
     {
         return $data->groupBy('name')->take(3)
             ->reduce(
-                function (ColumnChartModel $columnChartModel, $data, $key) use ($colors) {
+                function (ColumnChartModel $columnChartModel, $data, $key) {
                     $name = $data->first()->name;
                     $value = $data->first()->orders_sum_qty;
-                    $index = Str::slug($key);
 
-                    $result = $columnChartModel->addColumn($name, $value, $colors[$index]);
+                    $result = $columnChartModel->addColumn($name, $value, randColor());
 
                     return $result;
                 },
@@ -70,19 +86,18 @@ class ManagerDashboard extends Component
             ->reduce(
                 function (PieChartModel $pieChartModel, $data) {
                     $type = $data->first()->name;
-                    $value = $data->first()->orders_sum_qty;
+                    $value = (int) $data->first()->orders_sum_qty;
 
                     return $pieChartModel->addSlice($type, $value, randColor());
                 },
                 LivewireCharts::pieChartModel()
                     //->setTitle('Expenses by Type')
-                    // ->setAnimated($this->firstRun)
-                    ->withOnSliceClickEvent('onSliceClick')
+                    ->setAnimated($this->firstRun)
                     //->withoutLegend()
                     ->legendPositionRight()
                     ->legendHorizontallyAlignedCenter()
                     // ->setDataLabelsEnabled($this->showDataLabels)
-                    ->setColors(['#b01a1b', '#d41b2c', '#ec3c3b', '#f66665'])
+                    ->setSparklineEnabled(true)
             );
     }
 
@@ -112,28 +127,44 @@ class ManagerDashboard extends Component
         $mostBoughtMenus = Product::query()
             ->withSum('orders', 'qty')
             ->orderBy('orders_sum_qty', 'desc')
+            // ->whereNot('orders_sum_qty', null)
             ->get();
 
-            // dd($mostBoughtMenus->groupBy('name'));
+        $mostBoughtCategories = Category::query()
+            ->with('orders')
+            ->withSum('orders', 'qty')
+            // ->withAggregate('products.orders', 'qty', 'sum')
+            ->get();
 
-        $colors = arrayWithKey($this->colors, $mostBoughtMenus->toArray(), 'name');
+        $columnChartModel = $this->setColumnChartModel($mostBoughtMenus);
 
-        $columnChartModel = $this->setColumnChartModel($mostBoughtMenus, $colors);
-
-        $pieChartModel = $this->setPieChartModel($mostBoughtMenus);
+        $pieChartModel = $this->setPieChartModel($mostBoughtCategories);
 
         $lineChartModel = $this->setLineChartModel($this->setRevenueForChart());
 
+        $ordersMonth = Order::query()
+            ->distinct()
+            ->get([
+                DB::raw('Month(created_at) as month')
+            ]);
+
+        $ordersYear = Order::query()
+            ->distinct()
+            ->get([
+                DB::raw('year(created_at) as year')
+            ]);
         return view(
             'livewire.manager-dashboard',
             compact(
                 'columnChartModel',
                 'pieChartModel',
                 'lineChartModel',
-                'mostBoughtMenus'
+                'mostBoughtMenus',
+                'ordersMonth',
+                'ordersYear'
             )
         )->with([
-            'month' => Carbon::now()->monthName . ' ' . Carbon::now()->year
+            'activities' => Activity::orderBy('created_at', 'desc')->paginate(5)
         ]);
     }
 }

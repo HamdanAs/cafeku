@@ -55,7 +55,7 @@ class User extends Component
     public function render()
     {
         return view('livewire.user', [
-            'users' => ModelsUser::query()->with(['person', 'role'])->get()
+            'users' => ModelsUser::query()->with(['person', 'role'])->whereNot('role_id', 2)->get()
         ]);
     }
 }

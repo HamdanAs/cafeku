@@ -1,4 +1,5 @@
 <div class="p-4">
+    <x-dialog z-index="z-50" blur="md" align="center" />
     <nav class="flex mb-3" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
             <li class="inline-flex items-center">
@@ -24,39 +25,46 @@
 
     <div class="grid grid-cols-1 gap-4">
         <div class="bg-white rounded-lg border shadow-md p-4">
-            <a href="{{ route('manager.menu.add') }}" class="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                Tambah Menu
-                <ion-icon name="add-outline" class="ml-2 -mr-1 w-4 h-4"></ion-icon>
-            </a>
+            <div class="flex     gap-4">
+                <a href="{{ route('manager.menu.add') }}" class="inline-flex items-center py-2 px-4 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    Tambah Menu
+                    <ion-icon name="add-outline" class="ml-2 -mr-1 w-4 h-4"></ion-icon>
+                </a>
+                <div class="hidden relative mr-3 md:mr-0 md:block">
+                    <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <input wire:model="search" type="text" id="email-adress-icon" class="block p-2 pl-10 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search...">
+                </div>
+            </div>
+
             <div class="grid grid-cols-3 gap-4 mt-4">
 
                 @foreach ($menus as $menu)
                 <div class="max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-                    <a href="#">
-                        <img class="rounded-t-lg h-48 w-full object-cover" src="/{{ 'storage/' . $menu?->picture }}" alt="">
-                    </a>
+                    <div class="py-8 h-48">
+                        <img class="rounded-t-lg w-36 object-cover mx-auto" src="/{{ 'storage/' . $menu?->picture }}" alt="">
+                    </div>
                     <div class="p-5">
                         <div class="flex justify-between mb-4">
                             <div>
                                 <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">{{ $menu->name }}</h5>
                                 <span class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
-                                    @php
-                                    $rupiah = "Rp. " . number_format($menu->price, 2, ',' ,'.')
-                                    @endphp
-
-                                    {{ $rupiah }}
+                                    {{ formatRupiah($menu->price) }}
                                 </span>
                             </div>
 
-                            <span class="text-sm font-medium text-gray-600 inline-flex flex-col">
+                            {{-- <span class="text-sm font-medium text-gray-600 inline-flex flex-col">
                                 <span class="text-center">Stock</span>
 
                                 <span>
                                     <span class="cursor-pointer bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900" wire:click="$emit('stockSub', {{ $menu->id }})">-</span>
-                                    <span>{{ $menu->stock }}</span>
-                                    <span class="cursor-pointer bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900" wire:click="$emit('stockAdd', {{ $menu->id }})">+</span>
-                                </span>
+                            <span>{{ $menu->stock }}</span>
+                            <span class="cursor-pointer bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900" wire:click="$emit('stockAdd', {{ $menu->id }})">+</span>
                             </span>
+                            </span> --}}
                         </div>
                         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ $menu?->description }}</p>
                         <a href="/manager/menu/edit/{{ $menu->id }}" class="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">

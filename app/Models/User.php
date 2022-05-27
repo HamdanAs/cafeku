@@ -44,10 +44,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public const ADMIN = 1;
-    public const MANAGER = 2;
-    public const CASHIER = 3;
-    public const WAITER = 4;
+    public const ADMIN = 2;
+    public const MANAGER = 3;
+    public const CASHIER = 4;
+    public const WAITER = 5;
 
     public function role()
     {
@@ -57,5 +57,10 @@ class User extends Authenticatable
     public function person()
     {
         return $this->hasOne(Person::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 }
